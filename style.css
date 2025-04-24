@@ -1,0 +1,895 @@
+
+:root {
+    --primary-color: #3F51B5; /* Indigo */
+    --primary-dark: #303F9F;
+    --accent-color: #FF4081; /* Pink */
+    --accent-dark: #d81b60;
+    --text-color: #333;
+    --text-light: #555;
+    --text-on-primary: #ffffff;
+    --text-on-accent: #ffffff;
+    --background-color: #f4f7fc; /* Lighter background */
+    --card-background: #ffffff;
+    --card-shadow: 0 3px 6px rgba(0, 0, 0, 0.08);
+    --card-hover-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
+    --border-color: #e0e0e0;
+    --success-color: #4CAF50; /* Green */
+    --danger-color: #f44336;  /* Red */
+    --info-color: #2196F3;   /* Blue */
+    --warning-color: #FFC107; /* Amber */
+    --gray-light: #f1f1f1;
+    --gray-medium: #ccc;
+    --gray-dark: #757575;
+    --font-family: 'Roboto', sans-serif;
+    --border-radius: 8px;
+    --transition-speed: 0.3s;
+    --highlight-color: #ffeb3b; /* Yellow for highlight */
+    --highlight-text: #333;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-family);
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+/* --- App Bar --- */
+.app-bar {
+    background-color: var(--primary-color);
+    color: var(--text-on-primary);
+    padding: 16px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+
+.app-bar h1 {
+    margin: 0;
+    font-size: 1.6em;
+    font-weight: 500;
+}
+
+/* Button Group in Header */
+.button-group {
+    display: flex;
+    gap: 10px; /* Space between buttons */
+}
+
+/* --- Floating Action Button (FAB) --- */
+/* Styles apply to both buttons in the header group now */
+.fab {
+    background-color: var(--accent-color);
+    color: var(--text-on-accent);
+    border: none;
+    border-radius: 50%;
+    width: 56px;
+    height: 56px;
+    font-size: 28px; /* Icon size */
+    display: flex; /* Center icon */
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: transform var(--transition-speed) ease, background-color var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+    outline: none;
+}
+/* Specific style for random button maybe? */
+#random-destination-btn {
+    background-color: var(--info-color); /* Example: Blue */
+}
+#random-destination-btn:hover {
+    background-color: #1976D2; /* Darker blue */
+}
+
+.fab:hover {
+    background-color: var(--accent-dark); /* Default hover */
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+}
+
+.fab:active {
+    transform: scale(0.95);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.fab:disabled { /* Style for disabled random button */
+    background-color: var(--gray-medium);
+    cursor: not-allowed;
+    transform: scale(1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.fab i.material-icons {
+    line-height: 1; /* Ensure icon is centered */
+}
+
+
+/* --- Main Content Area --- */
+main {
+    padding: 24px;
+    max-width: 1200px; /* Limit max width for larger screens */
+    margin: 0 auto; /* Center content */
+}
+
+/* --- Destination List --- */
+.destination-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 40px 0; /* Space below list */
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Responsive grid */
+    gap: 20px;
+}
+
+/* Placeholder for empty list */
+.empty-list-placeholder {
+    text-align: center;
+    padding: 40px;
+    color: var(--text-light);
+    background-color: var(--card-background);
+    border-radius: var(--border-radius);
+    box-shadow: var(--card-shadow);
+    grid-column: 1 / -1; /* Span full grid width */
+    border: 1px dashed var(--border-color);
+}
+
+/* --- Destination Item Card --- */
+.destination-item {
+    background-color: var(--card-background);
+    border-radius: var(--border-radius);
+    box-shadow: var(--card-shadow);
+    transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease, background-color var(--transition-speed) ease;
+    position: relative;
+    overflow: hidden;
+    border-left: 5px solid transparent;
+    display: flex;
+    flex-direction: column;
+    min-height: 150px;
+}
+
+/* Style the content wrapper */
+.card-content {
+    padding: 20px 20px 10px 20px;
+    flex-grow: 1;
+}
+
+
+.destination-item:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--card-hover-shadow);
+}
+
+.destination-item.not-reached {
+    border-left-color: var(--gray-medium);
+}
+
+.destination-item.reached {
+    background: linear-gradient(135deg, #e8f5e9 0%, #ffffff 100%);
+    border-left-color: var(--success-color);
+    color: var(--text-color);
+}
+
+.destination-item.reached::after {
+    content: 'check_circle';
+    font-family: 'Material Icons';
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    color: var(--success-color);
+    font-size: 20px;
+    opacity: 0.8;
+    z-index: 1;
+}
+
+.destination-item h3 {
+    margin: 0 0 8px 0;
+    font-size: 1.3em;
+    font-weight: 500;
+    color: var(--primary-dark);
+}
+.destination-item.reached h3 {
+     color: #2e7d32;
+}
+
+.destination-item p {
+    margin: 0;
+    font-size: 0.95em;
+    color: var(--text-light);
+    line-height: 1.5;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-break: break-word;
+    /* Simple way to limit lines shown, adjust as needed */
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* Show 3 lines */
+    -webkit-box-orient: vertical;
+}
+
+/* Card Actions (Edit/Delete) */
+.card-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: auto; /* Pushes actions to the bottom */
+    padding: 10px 20px 15px 20px;
+    align-self: flex-end;
+    z-index: 2;
+}
+
+.card-actions button {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-light);
+    padding: 6px;
+    border-radius: 50%;
+    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease, border-color var(--transition-speed) ease;
+}
+
+.card-actions button:hover {
+    background-color: var(--gray-light);
+    border-color: var(--gray-medium);
+    color: var(--primary-color);
+}
+
+.card-actions button i.material-icons {
+     font-size: 20px;
+}
+
+.destination-item.reached .delete-btn {
+    display: none;
+}
+
+/* --- Random Selection Effects --- */
+
+/* Highlighted destination */
+.destination-item.highlight {
+    background-color: var(--highlight-color); /* Yellow highlight */
+    color: var(--highlight-text); /* Ensure text is readable */
+    border-left-color: var(--warning-color); /* Amber border */
+    box-shadow: 0 0 15px rgba(255, 193, 7, 0.6); /* Subtle glow */
+    transition: background-color 0.3s ease, border-left-color 0.3s ease, box-shadow 0.3s ease;
+}
+.destination-item.highlight h3 {
+    color: var(--primary-dark); /* Keep title color */
+}
+.destination-item.highlight p {
+    color: var(--text-color); /* Darker text on yellow */
+}
+
+
+/* Initial scan effect for unreached destinations */
+.destination-item.temp-marquee {
+    animation: tempMarquee 0.5s ease-in-out infinite alternate; /* Loop scanning */
+    /* Slightly change background during scan */
+    background-color: var(--gray-light);
+    opacity: 0.8;
+    transition: background-color 0.1s, opacity 0.1s;
+}
+
+/* Final marquee effect for selected destination */
+.destination-item.marquee {
+    animation: finalMarquee 1.5s ease-in-out infinite; /* Slower, smoother final marquee */
+}
+
+@keyframes tempMarquee {
+    from {
+        transform: scale(0.98) translateX(-3px);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+    }
+    to {
+        transform: scale(1.02) translateX(3px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+}
+
+@keyframes finalMarquee {
+    0% { transform: translateX(0) scale(1.01); }
+    50% { transform: translateX(5px) scale(1.03); }
+    100% { transform: translateX(0) scale(1.01); }
+}
+
+/* --- Modal Styles --- */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1001;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.6);
+    animation: fadeIn var(--transition-speed) ease-out;
+}
+
+.modal-content {
+    background-color: var(--card-background);
+    margin: 8% auto;
+    padding: 30px;
+    border: none;
+    width: 90%;
+    max-width: 550px;
+    border-radius: var(--border-radius);
+    position: relative;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    animation: slideScaleIn var(--transition-speed) cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.close-btn {
+    color: var(--gray-medium);
+    background: none;
+    border: none;
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 32px;
+    font-weight: 300;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0;
+    transition: color var(--transition-speed) ease;
+}
+
+.close-btn:hover,
+.close-btn:focus {
+    color: var(--danger-color);
+    outline: none;
+}
+
+/* Modal Form Styles */
+.modal h2 {
+    margin: 0 0 25px 0;
+    font-size: 1.8em;
+    font-weight: 500;
+    color: var(--primary-color);
+    text-align: center;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 15px;
+}
+
+.modal form label {
+    display: block;
+    margin: 18px 0 6px 0;
+    font-weight: 500;
+    font-size: 0.9em;
+    color: var(--text-light);
+}
+
+.modal form input[type="text"],
+.modal form input[type="date"],
+.modal form textarea {
+    width: 100%;
+    padding: 12px 15px;
+    margin-bottom: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 1em;
+    font-family: inherit;
+    transition: border-color var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+}
+
+.modal form input[type="text"]:focus,
+.modal form input[type="date"]:focus,
+.modal form textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(63, 81, 181, 0.2);
+}
+
+.modal form textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* Grid layout for achievement date/companions */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+}
+
+/* General Modal Button Styles */
+.modal-actions button,
+.modal form button[type="submit"] {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: background-color var(--transition-speed) ease, box-shadow var(--transition-speed) ease, transform var(--transition-speed) ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.modal-actions button:hover,
+.modal form button[type="submit"]:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    transform: translateY(-1px);
+}
+.modal-actions button:active,
+.modal form button[type="submit"]:active {
+    transform: translateY(0px);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Specific Button Colors */
+.modal-actions button[type="submit"],
+#edit-save-changes-btn,
+#achievement-save-btn {
+    background-color: var(--primary-color);
+    color: var(--text-on-primary);
+}
+.modal-actions button[type="submit"]:hover,
+#edit-save-changes-btn:hover,
+#achievement-save-btn:hover {
+    background-color: var(--primary-dark);
+}
+
+.btn-secondary {
+    background-color: var(--gray-dark);
+    color: var(--text-on-primary);
+}
+.btn-secondary:hover { background-color: #616161; }
+
+.btn-danger {
+    background-color: var(--danger-color);
+    color: var(--text-on-primary);
+}
+.btn-danger:hover { background-color: #d32f2f; }
+
+.btn-success {
+    background-color: var(--success-color);
+    color: var(--text-on-primary);
+}
+.btn-success:hover { background-color: #388E3C; }
+
+.btn-info {
+    background-color: var(--info-color);
+    color: var(--text-on-primary);
+}
+.btn-info:hover { background-color: #1976D2; }
+
+
+/* Delete Modal Specifics */
+#delete-modal p {
+    margin-bottom: 25px;
+    text-align: center;
+    color: var(--text-light);
+}
+.radio-option {
+    margin-bottom: 15px;
+    padding: 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color var(--transition-speed) ease, border-color var(--transition-speed) ease;
+    display: flex; /* Align items */
+    align-items: center;
+}
+.radio-option:hover {
+    background-color: var(--gray-light);
+}
+.radio-option input[type="radio"] {
+    margin-right: 12px; /* More space */
+    accent-color: var(--primary-color);
+    flex-shrink: 0; /* Prevent radio shrinking */
+    width: 1.2em; /* Ensure visible size */
+    height: 1.2em;
+}
+.radio-option label {
+    font-weight: 500;
+    margin: 0;
+    display: block; /* Ensure label takes full width */
+}
+.radio-option label small {
+    display: block;
+    font-weight: 400;
+    color: var(--text-light);
+    font-size: 0.85em;
+    margin-top: 3px; /* Space between label and small text */
+    /* Removed margin-left */
+}
+/* Confirm button color changes handled by JS adding/removing classes */
+
+
+/* Achievement Modal Specifics */
+#achievement-modal h3 {
+    margin: 0 0 20px 0;
+    color: var(--text-light);
+    font-weight: 400;
+    font-size: 1.1em;
+    text-align: center;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 15px;
+}
+#achievement-dest-name-display {
+    font-weight: 500;
+    color: var(--primary-color);
+}
+
+/* --- Recommendation Modal Specifics --- */
+#recommend-modal .modal-content {
+    max-width: 600px;
+}
+
+#recommend-list-container {
+    margin-top: 10px;
+}
+
+.recommendation-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 40vh;
+    overflow-y: auto;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background-color: var(--gray-light); /* Light background for the list */
+}
+
+/* Style individual list items */
+.recommendation-item { /* Target the li directly */
+    padding: 15px; /* Increased padding */
+    border-bottom: 1px solid var(--border-color); /* Slightly darker border */
+    transition: background-color var(--transition-speed) ease;
+}
+.recommendation-item:hover {
+    background-color: #e8eaf6; /* Subtle indigo hover */
+}
+
+.recommendation-item:last-child {
+    border-bottom: none;
+}
+
+/* Style the content container within the li */
+.recommendation-content {
+    text-align: right; /* --- Align text to the right --- */
+}
+
+.recommendation-title {
+    display: block; /* Ensure it takes full width for alignment */
+    font-weight: 500;
+    color: var(--primary-dark);
+    margin-bottom: 5px; /* Space below title */
+    font-size: 1.05em;
+}
+
+.recommendation-rating {
+    display: block; /* Ensure it takes full width for alignment */
+    font-size: 0.9em;
+    color: var(--text-light);
+    margin-bottom: 8px; /* Space below rating */
+}
+
+.recommendation-description {
+    display: block; /* Ensure it takes full width for alignment */
+    font-size: 0.95em;
+    color: var(--text-color);
+    line-height: 1.5;
+    text-align: right !important;
+    /* Rely on text-align: right from parent .recommendation-content */
+}
+
+
+#recommend-list-container p {
+    font-size: 1.1em;
+    padding: 20px;
+    text-align: center;
+}
+#recommend-loading,
+#recommend-error,
+#recommend-empty {
+    display: none; /* JS controls display */
+}
+#recommend-error { color: var(--danger-color); }
+#recommend-empty { color: var(--text-light); }
+
+
+/* Adjust button order/spacing in edit modal */
+#edit-modal .modal-actions {
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+#edit-recommend-btn {
+     order: -1; /* Move it towards the left */
+     margin-bottom: 5px;
+}
+#edit-modal .modal-actions button {
+     margin-bottom: 5px;
+}
+
+
+/* --- Animations --- */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideScaleIn {
+    from { transform: translateY(-20px) scale(0.98); opacity: 0; }
+    to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+/* Card Shrink Animation for Deletion */
+.destination-item.shrinking {
+    animation: shrinkOut 0.4s ease-out forwards;
+}
+
+@keyframes shrinkOut {
+    from {
+        transform: scaleY(1);
+        opacity: 1;
+        margin-bottom: 20px; /* Matches original gap */
+        padding-top: 20px;
+        padding-bottom: 15px;
+        min-height: 150px; /* Matches original min-height */
+        border-left-width: 5px;
+    }
+    to {
+        transform: scaleY(0);
+        opacity: 0;
+        margin-top: 0;
+        margin-bottom: 0;
+        padding-top: 0;
+        padding-bottom: 0;
+        min-height: 0;
+        border: none;
+    }
+}
+
+/* --- Ranking System Styles --- */
+.ranking-section {
+    background-color: var(--card-background);
+    border-radius: var(--border-radius);
+    padding: 25px;
+    margin-top: 40px;
+    box-shadow: var(--card-shadow);
+}
+
+.ranking-section h2 {
+    margin: 0 0 25px 0;
+    color: var(--primary-color);
+    text-align: center;
+    font-weight: 500;
+    font-size: 1.6em;
+}
+
+/* Tabs */
+.tabs {
+    display: flex;
+    border-bottom: 2px solid var(--border-color);
+    margin-bottom: 25px;
+}
+
+.tab-link {
+    padding: 12px 20px;
+    cursor: pointer;
+    border: none;
+    background-color: transparent;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px; /* Overlap container border */
+    font-size: 1.05em;
+    font-weight: 500;
+    color: var(--text-light);
+    transition: color var(--transition-speed) ease, border-bottom-color var(--transition-speed) ease, background-color var(--transition-speed) ease;
+    flex-grow: 1;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.tab-link:hover {
+    color: var(--primary-dark);
+    background-color: rgba(63, 81, 181, 0.05); /* Light primary hover */
+}
+
+.tab-link.active {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+}
+
+/* Tab Content */
+.tab-content {
+    display: none;
+    animation: fadeIn 0.5s;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.tab-content h3 {
+    color: var(--text-light);
+    font-size: 1.2em;
+    margin-bottom: 20px;
+    text-align: center;
+    font-weight: 400;
+}
+
+/* Ranking Lists */
+.ranking-list { /* Applied class to ol */
+    list-style: none;
+    padding-left: 0;
+    counter-reset: ranking-counter;
+}
+
+.ranking-list li {
+    background-color: transparent;
+    padding: 12px 15px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+    counter-increment: ranking-counter;
+    position: relative;
+    padding-left: 60px; /* More space for rank number */
+    font-size: 1em;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    transition: background-color var(--transition-speed) ease;
+}
+.ranking-list li:hover {
+     background-color: var(--gray-light);
+}
+
+.ranking-list li::before {
+    content: counter(ranking-counter);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 45px; /* Width of the rank number area */
+    height: 100%;
+    background-color: var(--gray-light);
+    color: var(--text-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700; /* Bold rank number */
+    font-size: 1.1em;
+    border-right: 1px solid var(--border-color);
+    border-top-left-radius: 4px; /* Match parent radius */
+    border-bottom-left-radius: 4px;
+    transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease;
+}
+
+/* Top 3 Styling */
+.ranking-list li:nth-child(1) { border-color: #FFD700; } /* Gold */
+.ranking-list li:nth-child(1)::before { background-color: #FFD700; color: #6f4f00; border-color: #e6c300;}
+.ranking-list li:nth-child(2) { border-color: #C0C0C0; } /* Silver */
+.ranking-list li:nth-child(2)::before { background-color: #C0C0C0; color: #555; border-color: #adadad; }
+.ranking-list li:nth-child(3) { border-color: #CD7F32; } /* Bronze */
+.ranking-list li:nth-child(3)::before { background-color: #CD7F32; color: #613a15; border-color: #b8722d; }
+
+/* --- Responsiveness --- */
+@media (max-width: 768px) {
+    main {
+        padding: 16px;
+    }
+    .app-bar {
+        padding: 12px 16px;
+    }
+    .app-bar h1 {
+        font-size: 1.4em;
+    }
+    .destination-list {
+        gap: 15px;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Adjust min size */
+    }
+     .destination-item {
+        min-height: 130px;
+    }
+     .card-content {
+        padding: 15px 15px 5px 15px;
+    }
+     .destination-item h3 {
+        font-size: 1.2em;
+    }
+     .destination-item p {
+        font-size: 0.9em;
+         -webkit-line-clamp: 2; /* Show fewer lines on smaller cards */
+    }
+     .card-actions {
+        padding: 5px 15px 10px 15px;
+        gap: 5px;
+    }
+     .card-actions button {
+        width: 32px;
+        height: 32px;
+    }
+     .card-actions button i.material-icons {
+        font-size: 18px;
+    }
+
+    .modal-content {
+        margin: 10% auto;
+        padding: 20px;
+        max-width: 95%;
+    }
+     .modal h2 {
+        font-size: 1.5em;
+        margin-bottom: 20px;
+    }
+    .modal-actions {
+        justify-content: center;
+        gap: 10px;
+    }
+    #edit-modal .modal-actions {
+         justify-content: space-around;
+    }
+    .ranking-section {
+         padding: 20px;
+         margin-top: 30px;
+    }
+    .tabs {
+        margin-bottom: 20px;
+    }
+     .tab-link {
+        font-size: 1em;
+        padding: 10px 5px;
+    }
+     .ranking-list li {
+        padding-left: 55px;
+        font-size: 0.95em;
+    }
+     .ranking-list li::before {
+        width: 40px;
+        font-size: 1em;
+    }
+}
+
+@media (max-width: 480px) {
+     .app-bar h1 {
+        font-size: 1.2em;
+    }
+    .button-group {
+        gap: 8px;
+    }
+     .fab {
+        width: 48px;
+        height: 48px;
+        font-size: 24px;
+    }
+    .modal-actions button, .modal form button[type="submit"] {
+        font-size: 0.9em;
+        padding: 8px 15px;
+        flex-grow: 1; /* Allow buttons to grow */
+        flex-basis: 40%; /* Try to fit two buttons per row */
+        text-align: center;
+    }
+     #edit-modal .modal-actions button {
+        flex-basis: 45%; /* Adjust edit modal specifically if needed */
+    }
+    .destination-list {
+        grid-template-columns: 1fr; /* Single column on very small screens */
+    }
+    .ranking-list li {
+        font-size: 0.9em;
+    }
+}
