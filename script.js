@@ -438,11 +438,22 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             const name = destNameInput.value.trim();
             const notes = destNotesInput.value.trim();
-            if (name) {
+
+            if (!name) {
+                alert("Destination name cannot be empty.");
+                return; // Stop if name is empty
+            }
+
+            // Check for duplicates (case-insensitive)
+            const alreadyExists = destinations.some(dest => dest.name.toLowerCase() === name.toLowerCase());
+
+            if (alreadyExists) {
+                alert(`"${name}" has already been added.`);
+                // Optionally, you could focus the input again: destNameInput.focus();
+            } else {
+                // Only add if it doesn't exist
                 addDestination(name, notes);
                 closeModal('add-modal');
-            } else {
-                alert("Destination name cannot be empty.");
             }
         });
     } else {
